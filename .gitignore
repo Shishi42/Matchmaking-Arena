@@ -1,3 +1,7 @@
 node_modules
 package-lock.json
 config.json
+statSD.json
+statCS.json
+statGS.json
+stats/backups
