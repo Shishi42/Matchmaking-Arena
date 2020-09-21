@@ -5,26 +5,20 @@ const config = require("./config.json");
 const fs = require("fs");
 const jsonfile = require ("jsonfile");
 
-var statSD = {}
-var statCS = {}
-var statGS = {}
+var statsSD = {}
+var statsCS = {}
+var statsGS = {}
 
-var configID = {}
-
-if(fs.existsSync("configID.json")){
-  configID = jsonfile.readFileSync("configID.json");
+if(fs.existsSync("./STATS/SD.json")){
+  statsSD = jsonfile.readFileSync("./STATS/SD.json");
 }
 
-if(fs.existsSync("statSD.json")){
-  statSD = jsonfile.readFileSync("statSD.json");
+if(fs.existsSync("./STATS/CS.json")){
+  statsCS = jsonfile.readFileSync("./STATS/CS.json");
 }
 
-if(fs.existsSync("statCS.json")){
-  statCS = jsonfile.readFileSync("statCS.json");
-}
-
-if(fs.existsSync("statGS.json")){
-  statGS = jsonfile.readFileSync("statGS.json");
+if(fs.existsSync("./STATS/GS.json")){
+  statsGS = jsonfile.readFileSync("./STATS/GS.json");
 }
 
 bot.on("ready", async () => {
@@ -49,13 +43,7 @@ bot.on("message", async message => {
       message.delete();
     }
   }
-  /*if(content[0] === "$update"){
-    if(content[1] === "SD" || content[1] === "CS" || content[1] === "GS"){
-        addInStat(content[1], content[2], content[3], content[4], content[5], content[6], content[7], content[8]);
-        message.delete()
-    }else message.reply("Mauvais Jeu");
-  }
-  if(content[0] === "$clear"){
+  /*if(content[0] === "$clear"){
     clearStats();
     message.delete()
   }
@@ -72,98 +60,77 @@ bot.on("message", async message => {
 
 function addInStat(jeu, id, w, d, l, goalScored, goalConceded, nbMatch){
   if(jeu === "SD"){
-    statSD[id] = {
+    statsSD[id] = {
       win: w,
       draw: d,
       lose:  l,
+      pts: w*3 + d*2 + l,
       goalScored: goalScored,
       goalConceded:  goalConceded,
       nbMatch: nbMatch
     };
-    sortStat("SD");
   }else if(jeu === "CS"){
-    statCS[id] = {
+    statsCS[id] = {
       win: w,
       draw: d,
       lose:  l,
+      pts: w*3 + d*2 + l,
       goalScored: goalScored,
       goalConceded:  goalConceded,
       nbMatch: nbMatch
     };
-    sortStat("CS");
-    jsonfile.writeFileSync("statCS.json", statCS);
   }else{
-    statGS[id] = {
+    statsGS[id] = {
       win: w,
       draw: d,
       lose:  l,
+      pts: w*3 + d*2 + l,
       goalScored: goalScored,
       goalConceded:  goalConceded,
       nbMatch: nbMatch
     };
-    sortStat("GS");
-    jsonfile.writeFileSync("statGS.json", statGS);
   }
   saveStats();
   updateMsg();
 }
 
-function saveStats(){
-  fs.writeFile("statSD.json", JSON.stringify(statSD, null, 4), function(err) {});
-  fs.writeFile("statCS.json", JSON.stringify(statCS, null, 4), function(err) {});
-  fs.writeFile("statGS.json", JSON.stringify(statGS, null, 4), function(err) {});
+function clearJoueur(id, jeu){
+  /*if(jeu === "all"){
+    clearJoueurAll(id);
+  }
+  if(jeu === "SD"){
+    statsSD[id] = {}
+    sortStat("SD");
+    jsonfile.writeFileSync("SD.json", statsSD);
+  }else if(jeu === "CS"){
+    statsCS[id] = {}
+    sortStat("CS");
+    jsonfile.writeFileSync("CS.json", statsCS);
+  }else{
+    statsGS[id] = {}
+    sortStat("GS");
+    jsonfile.writeFileSync("GS.json", statsGS);
+  }
+  updateMsg();
+  */
 }
 
-function updateStat(jeu, id, w, d, l, goalScored, goalConceded, nbMatch){
-  /*if(jeu === "SD"){
-    if(message.author.id in statSD === false){
-      addInStat("SD", id, w, d, l, goalScored, goalConceded, nbMatch);
-    }else{
-      statSD[id] = {
-        win: w,
-        draw: d,
-        lose:  l,
-        goalScored: goalScored,
-        goalConceded:  goalConceded,
-        nbMatch: nbMatch
-      };
-  }
-  sortStat("SD");
-  jsonfile.writeFileSync("statSD.json", statSD);
+function clearJoueurAll(id){
+  /*clearJoueur("SD", id);
+  clearJoueur("CS", id);
+  clearJoueur("GS", id);*/
+}
 
-  }else if(jeu === "CS"){
-    if(message.author.id in statCS === false){
-      addInStat("CS", id, w, d, l, goalScored, goalConceded, nbMatch);
-    }else{
-      statCS[id] = {
-        win: w,
-        draw: d,
-        lose:  l,
-        goalScored: goalScored,
-        goalConceded:  goalConceded,
-        nbMatch: nbMatch
-      };
-    }
-  sortStat("SD");
-  jsonfile.writeFileSync("statCS.json", statCS);
-
-  }else{
-    if(message.author.id in statGS === false){
-      addInStat("GS", id, w, d, l, goalScored, goalConceded, nbMatch);
-    }else{
-      statGS[id] = {
-        win: w,
-        draw: d,
-        lose:  l,
-        goalScored: goalScored,
-        goalConceded:  goalConceded,
-        nbMatch: nbMatch
-      };
-    }
-  sortStat("GS");
-  jsonfile.writeFileSync("statGS.json", statGS);
+function clearAll(){
+  if(fs.existsSync("./STATS/SD.json")){
+    fs.unlinkSync(path)
   }
-  updateMsg();*/
+  if(fs.existsSync("./STATS/CS.json")){
+    fs.unlinkSync(path)
+  }
+  if(fs.existsSync("./STATS/GS.json")){
+    fs.unlinkSync(path)
+  }
 }
 
 function getStringMsg(){
@@ -173,24 +140,91 @@ function getStringMsg(){
 
   var i = -1;
 
-  for(var item in statSD){
+  var max = {
+    win: 0,
+    draw: 0,
+    lose:  0,
+    pts: 0,
+    goalScored: 0,
+    goalConceded:  0,
+    nbMatch: 0
+  };
+
+  var maxKey;
+  var maxKeys = [];
+
+  for(var x in statsSD){
+    for(var item in statsSD){
+      if((!maxKeys.includes(item)) && max.pts < Number(statsSD[item].pts)){
+        console.log(max.pts)
+        console.log(statsSD[item].pts)
+        max = statsSD[item];
+        maxKey = item;
+      }
+    }
+    max = {
+      win: 0,
+      draw: 0,
+      lose:  0,
+      pts: 0,
+      goalScored: 0,
+      goalConceded:  0,
+      nbMatch: 0
+    };
+    maxKeys.push(maxKey)
+
     i += 1;
-    pts = statSD[item].win*3 + statSD[item].draw*2 + statSD[item].lose*1;
-    SD += (`\n${i+1} - ${item}   ${pts}   ${statSD[item].goalScored}/${statSD[item].goalConceded}   ${statSD[item].goalScored-statSD[item].goalConceded}   ${statSD[item].nbMatch}`);
+    SD += (`\n${i+1} - ${maxKey}   ${statsSD[maxKey].pts}   ${statsSD[maxKey].goalScored}/${statsSD[maxKey].goalConceded}   ${statsSD[maxKey].goalScored-statsSD[maxKey].goalConceded}   ${statsSD[maxKey].nbMatch}`);
   }
 
   i = -1
-  for(var item in statCS){
+  for(var x in statsCS){
+    for(var item in statsCS){
+      if((!maxKeys.includes(item)) && max.pts < Number(statsCS[item].pts)){
+        console.log(max.pts)
+        console.log(statsCS[item].pts)
+        max = statsCS[item];
+        maxKey = item;
+      }
+    }
+    max = {
+      win: 0,
+      draw: 0,
+      lose:  0,
+      pts: 0,
+      goalScored: 0,
+      goalConceded:  0,
+      nbMatch: 0
+    };
+    maxKeys.push(maxKey)
+
     i += 1;
-    pts = statCS[item].win*3 + statCS[item].draw*2 + statCS[item].lose*1;
-    SD += (`\n${i+1} - ${item}   ${pts}   ${statCS[item].goalScored}/${statCS[item].goalConceded}   ${statCS[item].goalScored-statCS[item].goalConceded}   ${statCS[item].nbMatch}`);
+    CS += (`\n${i+1} - ${maxKey}   ${statsCS[maxKey].pts}   ${statsCS[maxKey].goalScored}/${statsCS[maxKey].goalConceded}   ${statsCS[maxKey].goalScored-statsCS[maxKey].goalConceded}   ${statsCS[maxKey].nbMatch}`);
   }
 
   i = -1
-  for(var item in statGS){
+  for(var x in statsGS){
+    for(var item in statsGS){
+      if((!maxKeys.includes(item)) && max.pts < Number(statsGS[item].pts)){
+        console.log(max.pts)
+        console.log(statsGS[item].pts)
+        max = statsGS[item];
+        maxKey = item;
+      }
+    }
+    max = {
+      win: 0,
+      draw: 0,
+      lose:  0,
+      pts: 0,
+      goalScored: 0,
+      goalConceded:  0,
+      nbMatch: 0
+    };
+    maxKeys.push(maxKey)
+
     i += 1;
-    pts = statGS[item].win*3 + statGS[item].draw*2 + statGS[item].lose*1;
-    SD += (`\n${i+1} - ${item}   ${pts}   ${statGS[item].goalScored}/${statGS[item].goalConceded}   ${statGS[item].goalScored-statGS[item].goalConceded}   ${statGS[item].nbMatch}`);
+    GS += (`\n${i+1} - ${maxKey}   ${statsGS[maxKey].pts}   ${statsGS[maxKey].goalScored}/${statsGS[maxKey].goalConceded}   ${statsGS[maxKey].goalScored-statsGS[maxKey].goalConceded}   ${statsGS[maxKey].nbMatch}`);
   }
 
   var msg = {}
@@ -202,26 +236,20 @@ function getStringMsg(){
   return msg;
 }
 
+
 function afficherStatsSet(channel){
 
   var msg = getStringMsg();
 
   channel.send(msg["SD"]).then(m => {
-    configID["IDmsgSD"] = m;
-    fs.writeFile("configID.json", JSON.stringify(configID, null, 4), function(err) {});
+    fs.writeFileSync("./ID/SD", m.id);
   });
   channel.send(msg["CS"]).then(m => {
-    configID["IDmsgCS"] = m;
-    fs.writeFile("configID.json", JSON.stringify(configID, null, 4), function(err) {});
+    fs.writeFileSync("./ID/CS", m.id);
   });
   channel.send(msg["GS"]).then(m => {
-    configID["IDmsgGS"] = m;
-    fs.writeFile("configID.json", JSON.stringify(configID, null, 4), function(err) {});
+    fs.writeFileSync("./ID/GS", m.id);
   });
-
-  if(fs.existsSync("configID.json")){
-    configID = jsonfile.readFileSync("configID.json");
-  }
 
 }
 
@@ -229,33 +257,32 @@ function updateMsg(){
 
   var msg = getStringMsg();
 
-  if(configID["IDmsgSD"]){
-    configID["IDmsgSD"].edit(msg["SD"]);
-  }
+  var sd = fs.readFileSync('./ID/SD', "utf8");
+  var cs = fs.readFileSync('./ID/CS', "utf8");
+  var gs = fs.readFileSync('./ID/GS', "utf8");
 
-  if(configID["IDmsgCS"]){
-    configID["IDmsgCS"].edit(msg["CS"]);
-  }
+  bot.channels.cache.get(config.chan_dev).messages.fetch(sd)
+    .then(message => message.edit(msg["SD"]))
 
-  if(configID["IDmsgGS"]){
-    configID["IDmsgGS"].edit(msg["GS"]);
-  }
+  bot.channels.cache.get(config.chan_dev).messages.fetch(cs)
+    .then(message => message.edit(msg["CS"]))
+
+  bot.channels.cache.get(config.chan_dev).messages.fetch(gs)
+    .then(message => message.edit(msg["CS"]))
 }
 
 function comparerJoueur(a, b){
-  /*var ptsA = a.win*3 + a.draw*2 + a.lose*1;
-  var ptsB = a.win*3 + a.draw*2 + a.lose*1;
 
-  if(ptsA > ptsB) return 1;
-  else if(ptsA < ptsB) return -1;
+  if(Number(a.pts) > Number(b.pts)) return 1;
+  else if(Number(a.pts) < Number(b.pts)) return -1;
   else{
 
-    if(a.nbMatch < b.nbMatch) return 1;
-    else if(a.nbMatch > b.nbMatch) return -1;
+    if(Number(a.nbMatch) < Number(b.nbMatch)) return 1;
+    else if(Number(a.nbMatch) > Number(b.nbMatch)) return -1;
     else{
 
-      var diffButA = a.goalScored - a.goalConceded;
-      var diffButB = b.goalScored - b.goalScored;
+      var diffButA = Number(a.goalScored) - Number(a.goalConceded);
+      var diffButB = Number(b.goalScored) - Number(b.goalScored);
 
       if(diffButA > diffButB) return 1;
       if(diffButA < diffButB) return -1;
@@ -264,44 +291,14 @@ function comparerJoueur(a, b){
         return 1;
       }
     }
-  }*/
-}
-
-function sortStat(jeu){
-  /*if(jeu === "SD") [].slice.call(statSD).sort(comparerJoueur);
-  else if(jeu === "CS") statCS.sort(comparerJoueur);
-  else statGS.sort(comparerJoueur);*/
-}
-
-function clearStats(){
-  /*statSD = {};
-  statCS = {};
-  statGS = {};*/
-}
-
-function clearJoueur(id, jeu){
-  /*if(jeu === "all"){
-    clearJoueurAll(id);
   }
-  if(jeu === "SD"){
-    statSD[id] = {}
-    sortStat("SD");
-    jsonfile.writeFileSync("statSD.json", statSD);
-  }else if(jeu === "CS"){
-    statCS[id] = {}
-    sortStat("CS");
-    jsonfile.writeFileSync("statCS.json", statCS);
-  }else{
-    statGS[id] = {}
-    sortStat("GS");
-    jsonfile.writeFileSync("statGS.json", statGS);
-  }*/
 }
 
-function clearJoueurAll(id){
-  /*clearJoueur("SD", id);
-  clearJoueur("CS", id);
-  clearJoueur("GS", id);*/
+function saveStats(){
+  fs.writeFile("./STATS/SD.json", JSON.stringify(statsSD, null, 4), function(err) {});
+  fs.writeFile("./STATS/CS.json", JSON.stringify(statsCS, null, 4), function(err) {});
+  fs.writeFile("./STATS/GS.json", JSON.stringify(statsGS, null, 4), function(err) {});
 }
+
 
 bot.login(config.token);
