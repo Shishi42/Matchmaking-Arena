@@ -210,14 +210,14 @@ function addMatch(jeu, j1, j2, g1, g2){
     if(leadCS[j2] == undefined) addPlayer("CS", j2, 0, 0, 0, 0)
 
     if(Number(g1) > Number(g2)){
-      leadCS[j1].pts += 3
+      leadCS[j1].pts += 4
       leadCS[j2].pts += 1
     }else if(Number(g1) == Number(g2)){
       leadCS[j1].pts += 2
       leadCS[j2].pts += 2
     }else if(Number(g1) < Number(g2)){
       leadCS[j1].pts += 1
-      leadCS[j2].pts += 3
+      leadCS[j2].pts += 4
     }
 
     leadCS[j1].goalScored += Number(g1)
@@ -234,14 +234,14 @@ function addMatch(jeu, j1, j2, g1, g2){
     if(leadSTR[j2] == undefined) addPlayer("STR", j2, 0, 0, 0, 0)
 
     if(Number(g1) > Number(g2)){
-      leadSTR[j1].pts += 3
+      leadSTR[j1].pts += 4
       leadSTR[j2].pts += 1
     }else if(Number(g1) == Number(g2)){
       leadSTR[j1].pts += 2
       leadSTR[j2].pts += 2
     }else if(Number(g1) < Number(g2)){
       leadSTR[j1].pts += 1
-      leadSTR[j2].pts += 3
+      leadSTR[j2].pts += 4
     }
 
     leadSTR[j1].goalScored += Number(g1)
@@ -258,14 +258,14 @@ function addMatch(jeu, j1, j2, g1, g2){
     if(leadGX[j2] == undefined) addPlayer("GX", j2, 0, 0, 0, 0)
 
     if(Number(g1) > Number(g2)){
-      leadGX[j1].pts += 3
+      leadGX[j1].pts += 4
       leadGX[j2].pts += 1
     }else if(Number(g1) == Number(g2)){
       leadGX[j1].pts += 2
       leadGX[j2].pts += 2
     }else if(Number(g1) < Number(g2)){
       leadGX[j1].pts += 1
-      leadGX[j2].pts += 3
+      leadGX[j2].pts += 4
     }
 
     leadGX[j1].goalScored += Number(g1)
