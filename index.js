@@ -7,7 +7,8 @@ const jsonfile = require ("jsonfile")
 
 var leadSD = {}
 var leadCS = {}
-var leadGS = {}
+var leadSTR = {}
+var leadGX = {}
 
 if(fs.existsSync("./LEADS/SD.json")){
   leadSD = jsonfile.readFileSync("./LEADS/SD.json")
@@ -17,19 +18,19 @@ if(fs.existsSync("./LEADS/CS.json")){
   leadCS = jsonfile.readFileSync("./LEADS/CS.json")
 }
 
-if(fs.existsSync("./LEADS/GS.json")){
-  leadGS = jsonfile.readFileSync("./LEADS/GS.json")
+if(fs.existsSync("./LEADS/STR.json")){
+  leadSTR = jsonfile.readFileSync("./LEADS/STR.json")
+}
+
+if(fs.existsSync("./LEADS/GX.json")){
+  leadGX= jsonfile.readFileSync("./LEADS/GX.json")
 }
 
 bot.on("ready", async () => {
 
   console.log(`Connecté en tant que ${bot.user.tag}!`)
 
-  bot.channels.cache.get(config.chan_dev).send('Matchmaking Arena est connecté.').then(msg => {
-    msg.delete({timeout: 3000})
-  });
-
-  //bot.channels.cache.get(config.chan_dev).send('------------------------------------------------')
+  bot.channels.cache.get(config.chan_dev).send('Matchmaking Arena est connecté.')
 
   let statuses = [
     "Inazuma Eleven",
@@ -57,14 +58,14 @@ bot.on("ready", async () => {
 })
 
 bot.on("message", async message => {
-  if((message.author.id != config.bot_owner && message.author.id != config.bot_owner2) || message.author.bot || message.channel.type === "dm" || !message.content.startsWith(config.prefix)) return
+  if(!message.content.startsWith(config.prefix) || !message.member.hasPermission('ADMINISTRATOR') || message.author.bot || message.channel.type === "dm") return
 
   fs.appendFile('logs.txt', `${getCurrentDate()} - ${message.author.tag} (${message.author.id}) executed : ${message.content}\n`, function (err){});
 
-  content = message.content.split(" ")
+  content = message.content.split(" ").filter(word => word != '')
 
   /*f(content[0] === "$add"){
-    if(content[1] === "SD" || content[1] === "CS" || content[1] === "GS"){
+    if(content[1] === "SD" || content[1] === "CS" || content[1] === "STR" || content[1] === "GX"){
         addPlayer(content[1], content[2], content[3], content[4], content[5], content[6])
         message.reply(`Adding ${content[2]} on ${content[1]} with ${content[3]} pts ${content[4]}/${content[5]} and ${content[6]} matchs`).then(msg => {
           msg.delete({timeout: 5000})
@@ -78,8 +79,8 @@ bot.on("message", async message => {
     }
   }*/
 
-  if(content[0] === "$addMatch"){
-    if(content[1] === "SD" || content[1] === "CS" || content[1] === "GS"){
+  if(content[0] === "$addmatch"){
+    if(content[1] === "SD" || content[1] === "CS" || content[1] === "STR" || content[1] === "GX"){
       if(content[2] != content[3]){
         addMatch(content[1], content[2], content[3], content[4], content[5], content[6])
         message.reply(`Adding new match on ${content[1]} with ${content[2]} vs ${content[3]} and with a score of ${content[4]}/${content[5]}`).then(msg => {
@@ -100,8 +101,8 @@ bot.on("message", async message => {
     }
   }
 
-  if(content[0] === "$clearLeads"){
-    if(content[1] === "SD" || content[1] === "CS" || content[1] === "GS"|| content[1] === "all"){
+  if(content[0] === "$clearleads"){
+    if(content[1] === "SD" || content[1] === "CS" || content[1] === "STR" || content[1] === "GX" || content[1] === "all"){
       clearLeads(content[1])
       message.reply(`Clearing Leaderboard for ${content[1]}`).then(msg => {
         msg.delete({timeout: 5000})
@@ -115,8 +116,8 @@ bot.on("message", async message => {
     }
   }
 
-  if(content[0] === "$clearPlayer"){
-    if(content[1] === "SD" || content[1] === "CS" || content[1] === "GS"|| content[1] === "all"){
+  if(content[0] === "$clearplayer"){
+    if(content[1] === "SD" || content[1] === "CS" || content[1] === "STR" || content[1] === "GX" || content[1] === "all"){
       clearPlayer(content[1], content[2])
       message.reply(`Clearing Leaderboard for ${content[2]} on ${content[1]}`).then(msg => {
         msg.delete({timeout: 5000})
@@ -156,8 +157,17 @@ function addPlayer(jeu, id, points, goalScored, goalConceded, nbMatch){
       lastPos: 1000,
       lastPosIcon: ""
     };
-  }else if(jeu === "GS"){
-    leadGS[id] = {
+  }else if(jeu === "STR"){
+    leadSTR[id] = {
+      pts: points,
+      goalScored: goalScored,
+      goalConceded:  goalConceded,
+      nbMatch: nbMatch,
+      lastPos: 1000,
+      lastPosIcon: ""
+    };
+  }else if(jeu === "GX"){
+    leadGX[id] = {
       pts: points,
       goalScored: goalScored,
       goalConceded:  goalConceded,
@@ -218,29 +228,53 @@ function addMatch(jeu, j1, j2, g1, g2){
     leadCS[j1].nbMatch ++
     leadCS[j2].nbMatch ++
 
-  }else if(jeu === "GS"){
+  }else if(jeu === "STR"){
 
-    if(leadGS[j1] == undefined) addPlayer("GS", j1, 0, 0, 0, 0)
-    if(leadGS[j2] == undefined) addPlayer("GS", j2, 0, 0, 0, 0)
+    if(leadSTR[j1] == undefined) addPlayer("STR", j1, 0, 0, 0, 0)
+    if(leadSTR[j2] == undefined) addPlayer("STR", j2, 0, 0, 0, 0)
 
     if(Number(g1) > Number(g2)){
-      leadGS[j1].pts += 3
-      leadGS[j2].pts += 1
+      leadSTR[j1].pts += 3
+      leadSTR[j2].pts += 1
     }else if(Number(g1) == Number(g2)){
-      leadGS[j1].pts += 2
-      leadGS[j2].pts += 2
+      leadSTR[j1].pts += 2
+      leadSTR[j2].pts += 2
     }else if(Number(g1) < Number(g2)){
-      leadGS[j1].pts += 1
-      leadGS[j2].pts += 3
+      leadSTR[j1].pts += 1
+      leadSTR[j2].pts += 3
     }
 
-    leadGS[j1].goalScored += Number(g1)
-    leadGS[j2].goalScored += Number(g2)
-    leadGS[j1].goalConceded += Number(g2)
-    leadGS[j2].goalConceded += Number(g1)
+    leadSTR[j1].goalScored += Number(g1)
+    leadSTR[j2].goalScored += Number(g2)
+    leadSTR[j1].goalConceded += Number(g2)
+    leadSTR[j2].goalConceded += Number(g1)
 
-    leadGS[j1].nbMatch ++
-    leadGS[j2].nbMatch ++
+    leadSTR[j1].nbMatch ++
+    leadSTR[j2].nbMatch ++
+
+  }else if(jeu === "GX"){
+
+    if(leadGX[j1] == undefined) addPlayer("GX", j1, 0, 0, 0, 0)
+    if(leadGX[j2] == undefined) addPlayer("GX", j2, 0, 0, 0, 0)
+
+    if(Number(g1) > Number(g2)){
+      leadGX[j1].pts += 3
+      leadGX[j2].pts += 1
+    }else if(Number(g1) == Number(g2)){
+      leadGX[j1].pts += 2
+      leadGX[j2].pts += 2
+    }else if(Number(g1) < Number(g2)){
+      leadGX[j1].pts += 1
+      leadGX[j2].pts += 3
+    }
+
+    leadGX[j1].goalScored += Number(g1)
+    leadGX[j2].goalScored += Number(g2)
+    leadGX[j1].goalConceded += Number(g2)
+    leadGX[j2].goalConceded += Number(g1)
+
+    leadGX[j1].nbMatch ++
+    leadGX[j2].nbMatch ++
 
   }
 
@@ -256,8 +290,10 @@ function clearPlayer(jeu, id){
     delete leadSD[id]
   }else if(jeu === "CS"){
     delete leadCS[id]
-  }else if(jeu === "GS"){
-    delete leadGS[id]
+  }else if(jeu === "STR"){
+    delete leadSTR[id]
+  }else if(jeu === "GX"){
+    delete leadGX[id]
   }
   saveStats()
   updateMsg()
@@ -266,7 +302,8 @@ function clearPlayer(jeu, id){
 function clearPlayerAll(id){
   delete leadSD[id]
   delete leadCS[id]
-  delete leadGS[id]
+  delete leadSTR[id]
+  delete leadGX[id]
 
   saveStats()
   updateMsg()
@@ -280,9 +317,12 @@ function clearLeads(jeu){
     for(var id in leadSD) delete leadSD[id]
   }else if(jeu === "CS"){
     for(var id in leadCS) delete leadCS[id]
-  }else if(jeu === "GS"){
-    for(var id in leadGS) delete leadGS[id]
+  }else if(jeu === "STR"){
+    for(var id in leadSTR) delete leadSTR[id]
+  }else if(jeu === "GX"){
+    for(var id in leadGX) delete leadGX[id]
   }
+
   saveStats()
   updateMsg()
 }
@@ -290,7 +330,8 @@ function clearLeads(jeu){
 function clearLeadsAll(){
   for(var id in leadSD) delete leadSD[id]
   for(var id in leadCS) delete leadCS[id]
-  for(var id in leadGS) delete leadGS[id]
+  for(var id in leadSTR) delete leadSTR[id]
+  for(var id in leadGX) delete leadGX[id]
 
   saveStats()
   updateMsg()
@@ -344,7 +385,7 @@ function getStringMsgSD(){
 }
 
 function getStringMsgCS(){
-  var CS = "------------------------------------------------\nLeaderboard CS :\n"
+  var CS = "------------------------------------------------\nLeaderboard Chrono Stones :\n"
   var i = -1
 
   var max = {
@@ -390,8 +431,8 @@ function getStringMsgCS(){
   return CS
 }
 
-function getStringMsgGS(){
-  var GS = "------------------------------------------------\nLeaderboard GS :\n"
+function getStringMsgSTR(){
+  var STR = "------------------------------------------------\nLeaderboard Strikers 2013 :\n"
   var i = -1
 
   var max = {
@@ -404,12 +445,12 @@ function getStringMsgGS(){
   var maxKey
   var maxKeys = []
 
-  GS += "\nX.           NOM           |    PTS    |    BUTS    |    DIFF BUTS    |    NB MATCHS   "
+  STR += "\nX.           NOM           |    PTS    |    BUTS    |    DIFF BUTS    |    NB MATCHS   "
 
-  for(var x in leadGS){
-    for(var item in leadGS){
-      if(!maxKeys.includes(item) && comparePlayer(max, leadGS[item]) == -1){
-        max = leadGS[item]
+  for(var x in leadSTR){
+    for(var item in leadSTR){
+      if(!maxKeys.includes(item) && comparePlayer(max, leadSTR[item]) == -1){
+        max = leadSTR[item]
         maxKey = item
       }
     }
@@ -423,30 +464,79 @@ function getStringMsgGS(){
 
     if(maxKey != undefined){
       i += 1
-      if(leadGS[maxKey].lastPos == 1000) leadGS[maxKey].lastPosIcon = " | :new:"
-      else if(leadGS[maxKey].lastPos > i+1) leadGS[maxKey].lastPosIcon = " | :arrow_double_up:"
-      else if(leadGS[maxKey].lastPos < i+1) leadGS[maxKey].lastPosIcon = " | :arrow_double_down:"
-      GS += (`\n${i+1} - ${maxKey}   ${leadGS[maxKey].pts}   ${leadGS[maxKey].goalScored}/${leadGS[maxKey].goalConceded}   ${leadGS[maxKey].goalScored-leadGS[maxKey].goalConceded}   ${leadGS[maxKey].nbMatch} matchs ${leadGS[maxKey].lastPosIcon}`)
+      if(leadSTR[maxKey].lastPos == 1000) leadSTR[maxKey].lastPosIcon = " | :new:"
+      else if(leadSTR[maxKey].lastPos > i+1) leadSTR[maxKey].lastPosIcon = " | :arrow_double_up:"
+      else if(leadSTR[maxKey].lastPos < i+1) leadSTR[maxKey].lastPosIcon = " | :arrow_double_down:"
+      STR += (`\n${i+1} - ${maxKey}   ${leadSTR[maxKey].pts}   ${leadSTR[maxKey].goalScored}/${leadSTR[maxKey].goalConceded}   ${leadSTR[maxKey].goalScored-leadSTR[maxKey].goalConceded}   ${leadSTR[maxKey].nbMatch} matchs ${leadSTR[maxKey].lastPosIcon}`)
 
-      leadGS[maxKey].lastPos = i+1
+      leadSTR[maxKey].lastPos = i+1
 
       saveStats()
     }
   }
 
-  return GS
+  return STR
+}
+
+function getStringMsgGX(){
+  var GX = "------------------------------------------------\nLeaderboard Galaxy :\n"
+  var i = -1
+
+  var max = {
+    pts: 0,
+    goalScored: 0,
+    goalConceded:  0,
+    nbMatch: 0
+  };
+
+  var maxKey
+  var maxKeys = []
+
+  GX += "\nX.           NOM           |    PTS    |    BUTS    |    DIFF BUTS    |    NB MATCHS   "
+
+  for(var x in leadGX){
+    for(var item in leadGX){
+      if(!maxKeys.includes(item) && comparePlayer(max, leadGX[item]) == -1){
+        max = leadGX[item]
+        maxKey = item
+      }
+    }
+    max = {
+      pts: 0,
+      goalScored: 0,
+      goalConceded:  0,
+      nbMatch: 0
+    };
+    maxKeys.push(maxKey)
+
+    if(maxKey != undefined){
+      i += 1
+      if(leadGX[maxKey].lastPos == 1000) leadGX[maxKey].lastPosIcon = " | :new:"
+      else if(leadGX[maxKey].lastPos > i+1) leadGX[maxKey].lastPosIcon = " | :arrow_double_up:"
+      else if(leadGX[maxKey].lastPos < i+1) leadGX[maxKey].lastPosIcon = " | :arrow_double_down:"
+      GX += (`\n${i+1} - ${maxKey}   ${leadGX[maxKey].pts}   ${leadGX[maxKey].goalScored}/${leadGX[maxKey].goalConceded}   ${leadGX[maxKey].goalScored-leadGX[maxKey].goalConceded}   ${leadGX[maxKey].nbMatch} matchs ${leadGX[maxKey].lastPosIcon}`)
+
+      leadGX[maxKey].lastPos = i+1
+
+      saveStats()
+    }
+  }
+
+  return GX
 }
 
 function getStringMsg(){
   var SD = getStringMsgSD()
   var CS = getStringMsgCS()
-  var GS = getStringMsgGS()
+  var STR = getStringMsgSTR()
+  var GX = getStringMsgGX()
 
   var msg = {}
 
   msg["SD"] = SD
   msg["CS"] = CS
-  msg["GS"] = GS
+  msg["STR"] = STR
+  msg["GX"] = GX
 
   return msg
 }
@@ -470,12 +560,17 @@ function afficherStatsSet(channel){
   channel.send(msg["CS"]).then(m => {
     fs.writeFileSync("./ID/CS", m.id)
   });
-  channel.send(msg["GS"]).then(m => {
-    fs.writeFileSync("./ID/GS", m.id)
+  channel.send(msg["STR"]).then(m => {
+    fs.writeFileSync("./ID/STR", m.id)
+  });
+  channel.send(msg["GX"]).then(m => {
+    fs.writeFileSync("./ID/GX", m.id)
   });
   channel.send(`------------------------------------------------\nLast Updated ${getCurrentDate()}.`).then(m => {
     fs.writeFileSync("./ID/TIME", m.id);
   });
+
+  fs.writeFileSync("./ID/CHAN", channel.id);
 
 }
 
@@ -485,19 +580,24 @@ function updateMsg(){
 
   var sd = fs.readFileSync('./ID/SD', "utf8")
   var cs = fs.readFileSync('./ID/CS', "utf8")
-  var gs = fs.readFileSync('./ID/GS', "utf8")
+  var str = fs.readFileSync('./ID/STR', "utf8")
+  var gx = fs.readFileSync('./ID/GX', "utf8")
   var time = fs.readFileSync('./ID/TIME', "utf8")
+  var chan = fs.readFileSync('./ID/CHAN', "utf8")
 
-  bot.channels.cache.get(config.chan_dev).messages.fetch(sd)
+  bot.channels.cache.get(chan).messages.fetch(sd)
     .then(message => message.edit(msg["SD"]))
 
-  bot.channels.cache.get(config.chan_dev).messages.fetch(cs)
+  bot.channels.cache.get(chan).messages.fetch(cs)
     .then(message => message.edit(msg["CS"]))
 
-  bot.channels.cache.get(config.chan_dev).messages.fetch(gs)
-    .then(message => message.edit(msg["GS"]))
+  bot.channels.cache.get(chan).messages.fetch(str)
+    .then(message => message.edit(msg["STR"]))
 
-  bot.channels.cache.get(config.chan_dev).messages.fetch(time)
+  bot.channels.cache.get(chan).messages.fetch(gx)
+    .then(message => message.edit(msg["GX"]))
+
+  bot.channels.cache.get(chan).messages.fetch(time)
     .then(message => message.edit(`------------------------------------------------\nLast Updated ${getCurrentDate()}.`))
 
 }
@@ -528,7 +628,8 @@ function comparePlayer(a, b){
 function saveStats(){
   fs.writeFile("./LEADS/SD.json", JSON.stringify(leadSD, null, 4), function(err) {})
   fs.writeFile("./LEADS/CS.json", JSON.stringify(leadCS, null, 4), function(err) {})
-  fs.writeFile("./LEADS/GS.json", JSON.stringify(leadGS, null, 4), function(err) {})
+  fs.writeFile("./LEADS/STR.json", JSON.stringify(leadSTR, null, 4), function(err) {})
+  fs.writeFile("./LEADS/GX.json", JSON.stringify(leadGX, null, 4), function(err) {})
 }
 
 

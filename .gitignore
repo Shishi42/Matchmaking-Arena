@@ -7,9 +7,12 @@ statGS.json
 stats/backups
 SD
 CS
-GS
+STR
+GX
 TIME
+CHAN
 SD.json
 CS.json
-GS.json
+STR.json
+GX.json
 logs.txt
