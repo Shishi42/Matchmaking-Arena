@@ -201,8 +201,8 @@ function addMatch(jeu, j1, j2, g1, g2){
     leadSD[j1].goalConceded += Number(g2)
     leadSD[j2].goalConceded += Number(g1)
 
-    leadSD[j1].nbMatch ++
-    leadSD[j2].nbMatch ++
+    leadSD[j1].nbMatch += 1
+    leadSD[j2].nbMatch += 1
 
   }else if(jeu === "CS"){
 
@@ -225,8 +225,8 @@ function addMatch(jeu, j1, j2, g1, g2){
     leadCS[j1].goalConceded += Number(g2)
     leadCS[j2].goalConceded += Number(g1)
 
-    leadCS[j1].nbMatch ++
-    leadCS[j2].nbMatch ++
+    leadCS[j1].nbMatch += 1
+    leadCS[j2].nbMatch += 1
 
   }else if(jeu === "STR"){
 
@@ -249,8 +249,8 @@ function addMatch(jeu, j1, j2, g1, g2){
     leadSTR[j1].goalConceded += Number(g2)
     leadSTR[j2].goalConceded += Number(g1)
 
-    leadSTR[j1].nbMatch ++
-    leadSTR[j2].nbMatch ++
+    leadSTR[j1].nbMatch += 1
+    leadSTR[j2].nbMatch += 1
 
   }else if(jeu === "GX"){
 
@@ -273,8 +273,8 @@ function addMatch(jeu, j1, j2, g1, g2){
     leadGX[j1].goalConceded += Number(g2)
     leadGX[j2].goalConceded += Number(g1)
 
-    leadGX[j1].nbMatch ++
-    leadGX[j2].nbMatch ++
+    leadGX[j1].nbMatch += 1
+    leadGX[j2].nbMatch += 1
 
   }
 
