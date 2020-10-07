@@ -186,14 +186,14 @@ function addMatch(jeu, j1, j2, g1, g2){
     if(leadSD[j2] == undefined) addPlayer("SD", j2, 0, 0, 0, 0)
 
     if(Number(g1) > Number(g2)){
-      leadSD[j1].pts += 3
+      leadSD[j1].pts += 4
       leadSD[j2].pts += 1
     }else if(Number(g1) == Number(g2)){
       leadSD[j1].pts += 2
       leadSD[j2].pts += 2
     }else if(Number(g1) < Number(g2)){
       leadSD[j1].pts += 1
-      leadSD[j2].pts += 3
+      leadSD[j2].pts += 4
     }
 
     leadSD[j1].goalScored += Number(g1)
