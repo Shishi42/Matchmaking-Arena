@@ -82,7 +82,7 @@ bot.on("message", async message => {
   if(content[0] === "$addmatch"){
     if(content[1] === "SD" || content[1] === "CS" || content[1] === "STR" || content[1] === "GX"){
       if(content[2] != content[3]){
-        addMatch(content[1], content[2], content[3], content[4], content[5], content[6])
+        addMatch(content[1], content[2], content[3], content[4], content[5], content[6], content[7])
         message.reply(`Adding new match on ${content[1]} with ${content[2]} vs ${content[3]} and with a score of ${content[4]}/${content[5]}`).then(msg => {
           msg.delete({timeout: 5000})
         });
@@ -178,7 +178,7 @@ function addPlayer(jeu, id, points, goalScored, goalConceded, nbMatch){
   }
 }
 
-function addMatch(jeu, j1, j2, g1, g2){
+function addMatch(jeu, j1, j2, g1, g2, win){
 
   if(jeu === "SD"){
 
@@ -213,8 +213,14 @@ function addMatch(jeu, j1, j2, g1, g2){
       leadCS[j1].pts += 4
       leadCS[j2].pts += 1
     }else if(Number(g1) == Number(g2)){
-      leadCS[j1].pts += 2
-      leadCS[j2].pts += 2
+      if(win == 1){
+        leadCS[j1].pts += 4
+        leadCS[j2].pts += 1
+      }
+      else if(win == 2){
+        leadCS[j1].pts += 1
+        leadCS[j2].pts += 4
+      }
     }else if(Number(g1) < Number(g2)){
       leadCS[j1].pts += 1
       leadCS[j2].pts += 4
@@ -261,8 +267,14 @@ function addMatch(jeu, j1, j2, g1, g2){
       leadGX[j1].pts += 4
       leadGX[j2].pts += 1
     }else if(Number(g1) == Number(g2)){
-      leadGX[j1].pts += 2
-      leadGX[j2].pts += 2
+      if(win == 1){
+        leadGX[j1].pts += 4
+        leadGX[j2].pts += 1
+      }
+      else if(win == 2){
+        leadGX[j1].pts += 1
+        leadGX[j2].pts += 4
+      }
     }else if(Number(g1) < Number(g2)){
       leadGX[j1].pts += 1
       leadGX[j2].pts += 4
