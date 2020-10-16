@@ -136,7 +136,36 @@ bot.on("message", async message => {
     message.delete()
   }
 
+  if(content[0] === "$roles"){
+    embedRoles(message.channel)
+    message.delete()
+  }
+
 })
+
+function embedRoles(channel){
+  const language = new Discord.MessageEmbed()
+    .setColor('#E1002C')
+    .setDescription('__**Languages Setup**__\nReact with an emoji to get a role !')
+    .addField('Roles :',':flag_fr: -> Français\n:globe_with_meridians: -> International')
+    .setFooter('PEGASUS INAZUMA', 'https://i.imgur.com/8aZqZ9D.jpg')
+
+  const notif = new Discord.MessageEmbed()
+    .setColor('#E1002C')
+    .setDescription('__**Notifications Setup**__\nReact with an emoji to get a role !')
+    .addField('Roles :',':trophy: -> Tournois / Tournaments\n:bell: -> Réseaux Sociaux / Social Media')
+    .setFooter('PEGASUS INAZUMA', 'https://i.imgur.com/8aZqZ9D.jpg')
+
+  const match = new Discord.MessageEmbed()
+    .setColor('#E1002C')
+    .setDescription('__**Matchmaking Arena Setup**__\nReact with an emoji to get a role !')
+    .addField('Roles :',':8ball: -> Matchmaking SD\n:timer: -> Matchmaking CS\n:soccer: -> Matchmaking Strikers 2013\n:space_invader: -> Matchmaking Galaxy')
+    .setFooter('PEGASUS INAZUMA', 'https://i.imgur.com/8aZqZ9D.jpg')
+
+  channel.send(language)
+  channel.send(notif)
+  channel.send(match)
+}
 
 function addPlayer(jeu, id, points, goalScored, goalConceded, nbMatch){
   if(jeu === "SD"){
