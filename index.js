@@ -30,7 +30,7 @@ bot.on("ready", async () => {
 
   console.log(`Connecté en tant que ${bot.user.tag}!`)
 
-  bot.channels.cache.get(config.chan_dev).send('Matchmaking Arena est connecté.')
+ // bot.channels.cache.get(config.chan_dev).send('Matchmaking Arena est connecté.')
 
   let statuses = [
     "Inazuma Eleven",
