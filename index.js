@@ -60,10 +60,11 @@ bot.on("ready", async () => {
 bot.on("message", async message => {
   if(!message.content.startsWith(config.prefix) || !message.member.hasPermission('ADMINISTRATOR') || message.author.bot || message.channel.type === "dm") return
 
-  fs.appendFile('logs.txt', `${getCurrentDate()} - ${message.author.tag} (${message.author.id}) executed : ${message.content}\n`, function (err){});
-
   content = message.content.split(" ").filter(word => word != '')
 
+  if(content[0] === "$addmatch") fs.appendFile('logs.txt', `${getCurrentDate()} - ${message.author.tag} (${message.author.id}) executed : ${message.content} (${getName(toDiscordId(content[2]))} et ${getName(toDiscordId(content[3]))})\n`, function (err){});
+
+  fs.appendFile('logs.txt', `${getCurrentDate()} - ${message.author.tag} (${message.author.id}) executed : ${message.content}\n`, function (err){});
   /*f(content[0] === "$add"){
     if(content[1] === "SD" || content[1] === "CS" || content[1] === "STR" || content[1] === "GX"){
         addPlayer(content[1], content[2], content[3], content[4], content[5], content[6])
@@ -82,8 +83,8 @@ bot.on("message", async message => {
   if(content[0] === "$addmatch"){
     if(content[1] === "SD" || content[1] === "CS" || content[1] === "STR" || content[1] === "GX"){
       if(content[2] != content[3]){
-        addMatch(content[1], content[2], content[3], content[4], content[5], content[6], content[7])
-        message.reply(`Adding new match on ${content[1]} with ${content[2]} vs ${content[3]} and with a score of ${content[4]}/${content[5]}`).then(msg => {
+        addMatch(content[1], toDiscordId(content[2]), toDiscordId(content[3]), content[4], content[5], content[6], content[7])
+        message.reply(`Adding new match on ${content[1]} with <@${toDiscordId(content[2])}> vs <@${toDiscordId(content[3])}> and with a score of ${content[4]}/${content[5]}`).then(msg => {
           msg.delete({timeout: 5000})
         });
         message.delete()
@@ -118,7 +119,7 @@ bot.on("message", async message => {
 
   if(content[0] === "$clearplayer"){
     if(content[1] === "SD" || content[1] === "CS" || content[1] === "STR" || content[1] === "GX" || content[1] === "all"){
-      clearPlayer(content[1], content[2])
+      clearPlayer(content[1], toDiscordId(content[2]))
       message.reply(`Clearing Leaderboard for ${content[2]} on ${content[1]}`).then(msg => {
         msg.delete({timeout: 5000})
       });
@@ -136,14 +137,19 @@ bot.on("message", async message => {
     message.delete()
   }
 
-  if(content[0] === "$roles"){
+  /*if(content[0] === "$display"){
+    afficherStats(message.channel)
+    message.delete()
+  }*/
+
+  /*if(content[0] === "$roles"){
     embedRoles(message.channel)
     message.delete()
-  }
+  }*/
 
 })
 
-function embedRoles(channel){
+/*function embedRoles(channel){
   const language = new Discord.MessageEmbed()
     .setColor('#E1002C')
     .setDescription('__**Languages Setup**__\nReact with an emoji to get a role !')
@@ -165,7 +171,7 @@ function embedRoles(channel){
   channel.send(language)
   channel.send(notif)
   channel.send(match)
-}
+}*/
 
 function addPlayer(jeu, id, points, goalScored, goalConceded, nbMatch){
   if(jeu === "SD"){
@@ -175,7 +181,8 @@ function addPlayer(jeu, id, points, goalScored, goalConceded, nbMatch){
       goalConceded:  goalConceded,
       nbMatch: nbMatch,
       lastPos: 1000,
-      lastPosIcon: ""
+      lastPosIcon: "",
+      lastName: ""
     };
   }else if(jeu === "CS"){
     leadCS[id] = {
@@ -184,7 +191,8 @@ function addPlayer(jeu, id, points, goalScored, goalConceded, nbMatch){
       goalConceded:  goalConceded,
       nbMatch: nbMatch,
       lastPos: 1000,
-      lastPosIcon: ""
+      lastPosIcon: "",
+      lastName: ""
     };
   }else if(jeu === "STR"){
     leadSTR[id] = {
@@ -193,7 +201,8 @@ function addPlayer(jeu, id, points, goalScored, goalConceded, nbMatch){
       goalConceded:  goalConceded,
       nbMatch: nbMatch,
       lastPos: 1000,
-      lastPosIcon: ""
+      lastPosIcon: "",
+      lastName: ""
     };
   }else if(jeu === "GX"){
     leadGX[id] = {
@@ -202,27 +211,46 @@ function addPlayer(jeu, id, points, goalScored, goalConceded, nbMatch){
       goalConceded:  goalConceded,
       nbMatch: nbMatch,
       lastPos: 1000,
-      lastPosIcon: ""
+      lastPosIcon: "",
+      lastName: ""
     };
   }
+  saveStats()
 }
 
-function addMatch(jeu, j1, j2, g1, g2, win){
+function addMatch(jeu, j1, j2, g1, g2, param, param2){
+
+  var name1 = getName(j1)
+  var name2 = getName(j2)
+
+  var win
+  var bonus
+
+  if(param != undefined){
+    if(param.includes("win")) win = param.split(":")[1]
+    if(param.includes("bonus")) bonus = param.split(":")[1]
+  }
+
+  if(param2 != undefined){
+    if(param2.includes("win")) win = param2.split(":")[1]
+    if(param2.includes("bonus")) bonus = param2.split(":")[1]
+  }
+
+  if(bonus == undefined) bonus = 1
 
   if(jeu === "SD"){
-
     if(leadSD[j1] == undefined) addPlayer("SD", j1, 0, 0, 0, 0)
     if(leadSD[j2] == undefined) addPlayer("SD", j2, 0, 0, 0, 0)
 
     if(Number(g1) > Number(g2)){
-      leadSD[j1].pts += 4
-      leadSD[j2].pts += 1
+      leadSD[j1].pts += 4*bonus
+      leadSD[j2].pts += 1*bonus
     }else if(Number(g1) == Number(g2)){
-      leadSD[j1].pts += 2
-      leadSD[j2].pts += 2
+      leadSD[j1].pts += 2*bonus
+      leadSD[j2].pts += 2*bonus
     }else if(Number(g1) < Number(g2)){
-      leadSD[j1].pts += 1
-      leadSD[j2].pts += 4
+      leadSD[j1].pts += 1*bonus
+      leadSD[j2].pts += 4*bonus
     }
 
     leadSD[j1].goalScored += Number(g1)
@@ -233,26 +261,32 @@ function addMatch(jeu, j1, j2, g1, g2, win){
     leadSD[j1].nbMatch += 1
     leadSD[j2].nbMatch += 1
 
+    leadSD[j1].lastName = name1
+    leadSD[j2].lastName = name2
+
   }else if(jeu === "CS"){
 
     if(leadCS[j1] == undefined) addPlayer("CS", j1, 0, 0, 0, 0)
     if(leadCS[j2] == undefined) addPlayer("CS", j2, 0, 0, 0, 0)
 
     if(Number(g1) > Number(g2)){
-      leadCS[j1].pts += 4
-      leadCS[j2].pts += 1
+      leadCS[j1].pts += 4*bonus
+      leadCS[j2].pts += 1*bonus
     }else if(Number(g1) == Number(g2)){
       if(win == 1){
-        leadCS[j1].pts += 4
-        leadCS[j2].pts += 1
+        leadCS[j1].pts += 4*bonus
+        leadCS[j2].pts += 1*bonus
       }
       else if(win == 2){
-        leadCS[j1].pts += 1
-        leadCS[j2].pts += 4
+        leadCS[j1].pts += 1*bonus
+        leadCS[j2].pts += 4*bonus
+      }else{
+        leadCS[j1].pts += 2*bonus
+        leadCS[j2].pts += 2*bonus
       }
     }else if(Number(g1) < Number(g2)){
-      leadCS[j1].pts += 1
-      leadCS[j2].pts += 4
+      leadCS[j1].pts += 1*bonus
+      leadCS[j2].pts += 4*bonus
     }
 
     leadCS[j1].goalScored += Number(g1)
@@ -263,20 +297,23 @@ function addMatch(jeu, j1, j2, g1, g2, win){
     leadCS[j1].nbMatch += 1
     leadCS[j2].nbMatch += 1
 
+    leadCS[j1].lastName = name1
+    leadCS[j2].lastName = name2
+
   }else if(jeu === "STR"){
 
     if(leadSTR[j1] == undefined) addPlayer("STR", j1, 0, 0, 0, 0)
     if(leadSTR[j2] == undefined) addPlayer("STR", j2, 0, 0, 0, 0)
 
     if(Number(g1) > Number(g2)){
-      leadSTR[j1].pts += 4
-      leadSTR[j2].pts += 1
+      leadSTR[j1].pts += 4*bonus
+      leadSTR[j2].pts += 1*bonus
     }else if(Number(g1) == Number(g2)){
-      leadSTR[j1].pts += 2
-      leadSTR[j2].pts += 2
+      leadSTR[j1].pts += 2*bonus
+      leadSTR[j2].pts += 2*bonus
     }else if(Number(g1) < Number(g2)){
-      leadSTR[j1].pts += 1
-      leadSTR[j2].pts += 4
+      leadSTR[j1].pts += 1*bonus
+      leadSTR[j2].pts += 4*bonus
     }
 
     leadSTR[j1].goalScored += Number(g1)
@@ -287,26 +324,32 @@ function addMatch(jeu, j1, j2, g1, g2, win){
     leadSTR[j1].nbMatch += 1
     leadSTR[j2].nbMatch += 1
 
+    leadSTR[j1].lastName = name1
+    leadSTR[j2].lastName = name2
+
   }else if(jeu === "GX"){
 
     if(leadGX[j1] == undefined) addPlayer("GX", j1, 0, 0, 0, 0)
     if(leadGX[j2] == undefined) addPlayer("GX", j2, 0, 0, 0, 0)
 
     if(Number(g1) > Number(g2)){
-      leadGX[j1].pts += 4
-      leadGX[j2].pts += 1
+      leadGX[j1].pts += 4*bonus
+      leadGX[j2].pts += 1*bonus
     }else if(Number(g1) == Number(g2)){
       if(win == 1){
-        leadGX[j1].pts += 4
-        leadGX[j2].pts += 1
+        leadGX[j1].pts += 4*bonus
+        leadGX[j2].pts += 1*bonus
       }
       else if(win == 2){
-        leadGX[j1].pts += 1
-        leadGX[j2].pts += 4
+        leadGX[j1].pts += 1*bonus
+        leadGX[j2].pts += 4*bonus
+      }else{
+        leadGX[j1].pts += 2*bonus
+        leadGX[j2].pts += 2*bonus
       }
     }else if(Number(g1) < Number(g2)){
-      leadGX[j1].pts += 1
-      leadGX[j2].pts += 4
+      leadGX[j1].pts += 1*bonus
+      leadGX[j2].pts += 4*bonus
     }
 
     leadGX[j1].goalScored += Number(g1)
@@ -317,6 +360,8 @@ function addMatch(jeu, j1, j2, g1, g2, win){
     leadGX[j1].nbMatch += 1
     leadGX[j2].nbMatch += 1
 
+    leadGX[j1].lastName = name1
+    leadGX[j2].lastName = name2
   }
 
   saveStats()
@@ -392,7 +437,7 @@ function getStringMsgSD(){
   var maxKey
   var maxKeys = []
 
-  SD += "\nX.           NOM           |    PTS    |    BUTS    |    DIFF BUTS    |    NB MATCHS   "
+  SD += "\nX.                         NOM                         |    PTS    |    BUTS    |    DIFF  BUTS    |    NB MATCHS    |     :repeat:"
 
   for(var x in leadSD){
     for(var item in leadSD){
@@ -411,14 +456,13 @@ function getStringMsgSD(){
 
     if(maxKey != undefined){
       i += 1
-      if(leadSD[maxKey].lastPos == 1000) leadSD[maxKey].lastPosIcon = " | :new:"
-      else if(leadSD[maxKey].lastPos > i+1) leadSD[maxKey].lastPosIcon = " | :arrow_double_up:"
-      else if(leadSD[maxKey].lastPos < i+1) leadSD[maxKey].lastPosIcon = " | :arrow_double_down:"
-      SD += (`\n${i+1} - ${maxKey}   ${leadSD[maxKey].pts}   ${leadSD[maxKey].goalScored}/${leadSD[maxKey].goalConceded}   ${leadSD[maxKey].goalScored-leadSD[maxKey].goalConceded}   ${leadSD[maxKey].nbMatch} matchs ${leadSD[maxKey].lastPosIcon}`)
+      if(leadSD[maxKey].lastPos == 1000) leadSD[maxKey].lastPosIcon = " |     :new:"
+      else if(leadSD[maxKey].lastPos > i+1) leadSD[maxKey].lastPosIcon = " |     :arrow_double_up:"
+      else if(leadSD[maxKey].lastPos < i+1) leadSD[maxKey].lastPosIcon = " |     :arrow_double_down:"
+      else if(leadSD[maxKey].lastPos == i+1) leadSD[maxKey].lastPosIcon = " |     :pause_button:"
 
+      SD += (`\n${i+1} - <@${maxKey}>${getSpace(31-(leadSD[maxKey].lastName.length)+1)}=>   ${leadSD[maxKey].pts}pts    |      ${leadSD[maxKey].goalScored}/${leadSD[maxKey].goalConceded}      |            ${leadSD[maxKey].goalScored-leadSD[maxKey].goalConceded}            |        ${leadSD[maxKey].nbMatch} matchs        ${leadSD[maxKey].lastPosIcon}`)
       leadSD[maxKey].lastPos = i+1
-
-      saveStats()
     }
   }
 
@@ -439,7 +483,7 @@ function getStringMsgCS(){
   var maxKey
   var maxKeys = []
 
-  CS += "\nX.           NOM           |    PTS    |    BUTS    |    DIFF BUTS    |    NB MATCHS   "
+  CS += "\nX.                         NOM                         |    PTS    |    BUTS    |    DIFF  BUTS    |    NB MATCHS    |     :repeat:"
 
   for(var x in leadCS){
     for(var item in leadCS){
@@ -458,14 +502,14 @@ function getStringMsgCS(){
 
     if(maxKey != undefined){
       i += 1
-      if(leadCS[maxKey].lastPos == 1000) leadCS[maxKey].lastPosIcon = " | :new:"
-      else if(leadCS[maxKey].lastPos > i+1) leadCS[maxKey].lastPosIcon = " | :arrow_double_up:"
-      else if(leadCS[maxKey].lastPos < i+1) leadCS[maxKey].lastPosIcon = " | :arrow_double_down:"
-      CS += (`\n${i+1} - ${maxKey}   ${leadCS[maxKey].pts}   ${leadCS[maxKey].goalScored}/${leadCS[maxKey].goalConceded}   ${leadCS[maxKey].goalScored-leadCS[maxKey].goalConceded}   ${leadCS[maxKey].nbMatch} matchs ${leadCS[maxKey].lastPosIcon}`)
+      if(leadCS[maxKey].lastPos == 1000) leadCS[maxKey].lastPosIcon = " |     :new:"
+      else if(leadCS[maxKey].lastPos > i+1) leadCS[maxKey].lastPosIcon = " |     :arrow_double_up:"
+      else if(leadCS[maxKey].lastPos < i+1) leadCS[maxKey].lastPosIcon = " |     :arrow_double_down:"
+      else if(leadCS[maxKey].lastPos == i+1) leadCS[maxKey].lastPosIcon = " |     :pause_button:"
+
+      CS += (`\n${i+1} - <@${maxKey}>${getSpace(31-(leadCS[maxKey].lastName.length)+1)}=>   ${leadCS[maxKey].pts}pts    |      ${leadCS[maxKey].goalScored}/${leadCS[maxKey].goalConceded}      |            ${leadCS[maxKey].goalScored-leadCS[maxKey].goalConceded}            |        ${leadCS[maxKey].nbMatch} matchs        ${leadCS[maxKey].lastPosIcon}`)
 
       leadCS[maxKey].lastPos = i+1
-
-      saveStats()
     }
   }
 
@@ -486,7 +530,7 @@ function getStringMsgSTR(){
   var maxKey
   var maxKeys = []
 
-  STR += "\nX.           NOM           |    PTS    |    BUTS    |    DIFF BUTS    |    NB MATCHS   "
+  STR += "\nX.                         NOM                         |    PTS    |    BUTS    |    DIFF  BUTS    |    NB MATCHS    |     :repeat:"
 
   for(var x in leadSTR){
     for(var item in leadSTR){
@@ -505,14 +549,14 @@ function getStringMsgSTR(){
 
     if(maxKey != undefined){
       i += 1
-      if(leadSTR[maxKey].lastPos == 1000) leadSTR[maxKey].lastPosIcon = " | :new:"
-      else if(leadSTR[maxKey].lastPos > i+1) leadSTR[maxKey].lastPosIcon = " | :arrow_double_up:"
-      else if(leadSTR[maxKey].lastPos < i+1) leadSTR[maxKey].lastPosIcon = " | :arrow_double_down:"
-      STR += (`\n${i+1} - ${maxKey}   ${leadSTR[maxKey].pts}   ${leadSTR[maxKey].goalScored}/${leadSTR[maxKey].goalConceded}   ${leadSTR[maxKey].goalScored-leadSTR[maxKey].goalConceded}   ${leadSTR[maxKey].nbMatch} matchs ${leadSTR[maxKey].lastPosIcon}`)
+      if(leadSTR[maxKey].lastPos == 1000) leadSTR[maxKey].lastPosIcon = " |     :new:"
+      else if(leadSTR[maxKey].lastPos > i+1) leadSTR[maxKey].lastPosIcon = " |     :arrow_double_up:"
+      else if(leadSTR[maxKey].lastPos < i+1) leadSTR[maxKey].lastPosIcon = " |     :arrow_double_down:"
+      else if(leadSTR[maxKey].lastPos == i+1) leadSTR[maxKey].lastPosIcon = " |     :pause_button:"
+
+      STR += (`\n${i+1} - <@${maxKey}>${getSpace(31-(leadSTR[maxKey].lastName.length)+1)}=>   ${leadSTR[maxKey].pts}pts    |      ${leadSTR[maxKey].goalScored}/${leadSTR[maxKey].goalConceded}      |            ${leadSTR[maxKey].goalScored-leadSTR[maxKey].goalConceded}            |        ${leadSTR[maxKey].nbMatch} matchs        ${leadSTR[maxKey].lastPosIcon}`)
 
       leadSTR[maxKey].lastPos = i+1
-
-      saveStats()
     }
   }
 
@@ -533,7 +577,7 @@ function getStringMsgGX(){
   var maxKey
   var maxKeys = []
 
-  GX += "\nX.           NOM           |    PTS    |    BUTS    |    DIFF BUTS    |    NB MATCHS   "
+  GX += "\nX.                         NOM                         |    PTS    |    BUTS    |    DIFF  BUTS    |    NB MATCHS    |     :repeat:"
 
   for(var x in leadGX){
     for(var item in leadGX){
@@ -552,14 +596,14 @@ function getStringMsgGX(){
 
     if(maxKey != undefined){
       i += 1
-      if(leadGX[maxKey].lastPos == 1000) leadGX[maxKey].lastPosIcon = " | :new:"
-      else if(leadGX[maxKey].lastPos > i+1) leadGX[maxKey].lastPosIcon = " | :arrow_double_up:"
-      else if(leadGX[maxKey].lastPos < i+1) leadGX[maxKey].lastPosIcon = " | :arrow_double_down:"
-      GX += (`\n${i+1} - ${maxKey}   ${leadGX[maxKey].pts}   ${leadGX[maxKey].goalScored}/${leadGX[maxKey].goalConceded}   ${leadGX[maxKey].goalScored-leadGX[maxKey].goalConceded}   ${leadGX[maxKey].nbMatch} matchs ${leadGX[maxKey].lastPosIcon}`)
+      if(leadGX[maxKey].lastPos == 1000) leadGX[maxKey].lastPosIcon = " |     :new:"
+      else if(leadGX[maxKey].lastPos > i+1) leadGX[maxKey].lastPosIcon = " |     :arrow_double_up:"
+      else if(leadGX[maxKey].lastPos < i+1) leadGX[maxKey].lastPosIcon = " |     :arrow_double_down:"
+      else if(leadGX[maxKey].lastPos == i+1) leadGX[maxKey].lastPosIcon = " |     :pause_button:"
+
+      GX += (`\n${i+1} - <@${maxKey}>${getSpace(31-(leadGX[maxKey].lastName.length)+1)}=>   ${leadGX[maxKey].pts}pts    |      ${leadGX[maxKey].goalScored}/${leadGX[maxKey].goalConceded}      |            ${leadGX[maxKey].goalScored-leadGX[maxKey].goalConceded}            |        ${leadGX[maxKey].nbMatch} matchs        ${leadGX[maxKey].lastPosIcon}`)
 
       leadGX[maxKey].lastPos = i+1
-
-      saveStats()
     }
   }
 
@@ -579,16 +623,41 @@ function getStringMsg(){
   msg["STR"] = STR
   msg["GX"] = GX
 
+  saveStats()
   return msg
 }
 
 function getCurrentDate(){
   var today = new Date()
 
-  var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate()
-  var time = today.getHours()+':'+today.getMinutes()+':'+today.getSeconds()
+  var mois = (today.getMonth()+1)
+  var jour = today.getDate()
+  var heure = today.getHours()
+  var minute = today.getMinutes()
+  var seconde = today.getSeconds()
+
+  if(mois < 10) mois = "0" + mois.toString()
+  if(jour < 10) jour = "0" + jour.toString()
+  if(heure < 10) heure = "0" + heure.toString()
+  if(minute < 10) minute = "0" + minute.toString()
+  if(seconde < 10) seconde = "0" + seconde.toString()
+
+  var date = today.getFullYear()+'-'+mois+'-'+jour
+  var time = heure+':'+minute+':'+seconde
 
   return date+' '+time
+}
+
+function getName(id){
+  return bot.guilds.cache.get(config.serv).members.cache.get(id).nickname
+}
+
+function getSpace(nb){
+  var temp = []
+  for(i = 0; i < nb; i++){
+    temp += " "
+  }
+  return temp
 }
 
 function afficherStatsSet(channel){
@@ -614,6 +683,18 @@ function afficherStatsSet(channel){
   fs.writeFileSync("./ID/CHAN", channel.id);
 
 }
+
+/*function afficherStats(channel){
+
+  var msg = getStringMsg()
+
+  channel.send(msg["SD"])
+  channel.send(msg["CS"])
+  channel.send(msg["STR"])
+  channel.send(msg["GX"])
+  channel.send(`------------------------------------------------\nLast Updated ${getCurrentDate()}.`)
+
+}*/
 
 function updateMsg(){
 
@@ -641,6 +722,11 @@ function updateMsg(){
   bot.channels.cache.get(chan).messages.fetch(time)
     .then(message => message.edit(`------------------------------------------------\nLast Updated ${getCurrentDate()}.`))
 
+}
+
+function toDiscordId(tag){
+  if(tag.includes("!") || tag.includes("&")) return tag.slice(3,(tag.length)-1)
+  else return tag.slice(2,(tag.length)-1)
 }
 
 function comparePlayer(a, b){
@@ -672,6 +758,5 @@ function saveStats(){
   fs.writeFile("./LEADS/STR.json", JSON.stringify(leadSTR, null, 4), function(err) {})
   fs.writeFile("./LEADS/GX.json", JSON.stringify(leadGX, null, 4), function(err) {})
 }
-
 
 bot.login(config.token)
