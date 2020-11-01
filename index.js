@@ -461,7 +461,7 @@ function getStringMsgSD(){
       else if(leadSD[maxKey].lastPos < i+1) leadSD[maxKey].lastPosIcon = " |     :arrow_double_down:"
       else if(leadSD[maxKey].lastPos == i+1) leadSD[maxKey].lastPosIcon = " |     :pause_button:"
 
-      SD += (`\n${i+1} - <@${maxKey}>${getSpace(31-(leadSD[maxKey].lastName.length)+1)}=>   ${leadSD[maxKey].pts}pts    |      ${leadSD[maxKey].goalScored}/${leadSD[maxKey].goalConceded}      |            ${leadSD[maxKey].goalScored-leadSD[maxKey].goalConceded}            |        ${leadSD[maxKey].nbMatch} matchs        ${leadSD[maxKey].lastPosIcon}`)
+      SD += (`\n${i+1} - <@${maxKey}>${getSpace(20-(leadSD[maxKey].lastName.length)+1)}=>   ${leadSD[maxKey].pts}pts    |      ${leadSD[maxKey].goalScored}/${leadSD[maxKey].goalConceded}      |            ${leadSD[maxKey].goalScored-leadSD[maxKey].goalConceded}            |        ${leadSD[maxKey].nbMatch} matchs        ${leadSD[maxKey].lastPosIcon}`)
       leadSD[maxKey].lastPos = i+1
     }
   }
@@ -507,7 +507,7 @@ function getStringMsgCS(){
       else if(leadCS[maxKey].lastPos < i+1) leadCS[maxKey].lastPosIcon = " |     :arrow_double_down:"
       else if(leadCS[maxKey].lastPos == i+1) leadCS[maxKey].lastPosIcon = " |     :pause_button:"
 
-      CS += (`\n${i+1} - <@${maxKey}>${getSpace(31-(leadCS[maxKey].lastName.length)+1)}=>   ${leadCS[maxKey].pts}pts    |      ${leadCS[maxKey].goalScored}/${leadCS[maxKey].goalConceded}      |            ${leadCS[maxKey].goalScored-leadCS[maxKey].goalConceded}            |        ${leadCS[maxKey].nbMatch} matchs        ${leadCS[maxKey].lastPosIcon}`)
+      CS += (`\n${i+1} - <@${maxKey}>${getSpace(20-(leadCS[maxKey].lastName.length)+1)}=>   ${leadCS[maxKey].pts}pts    |      ${leadCS[maxKey].goalScored}/${leadCS[maxKey].goalConceded}      |            ${leadCS[maxKey].goalScored-leadCS[maxKey].goalConceded}            |        ${leadCS[maxKey].nbMatch} matchs        ${leadCS[maxKey].lastPosIcon}`)
 
       leadCS[maxKey].lastPos = i+1
     }
@@ -554,7 +554,7 @@ function getStringMsgSTR(){
       else if(leadSTR[maxKey].lastPos < i+1) leadSTR[maxKey].lastPosIcon = " |     :arrow_double_down:"
       else if(leadSTR[maxKey].lastPos == i+1) leadSTR[maxKey].lastPosIcon = " |     :pause_button:"
 
-      STR += (`\n${i+1} - <@${maxKey}>${getSpace(31-(leadSTR[maxKey].lastName.length)+1)}=>   ${leadSTR[maxKey].pts}pts    |      ${leadSTR[maxKey].goalScored}/${leadSTR[maxKey].goalConceded}      |            ${leadSTR[maxKey].goalScored-leadSTR[maxKey].goalConceded}            |        ${leadSTR[maxKey].nbMatch} matchs        ${leadSTR[maxKey].lastPosIcon}`)
+      STR += (`\n${i+1} - <@${maxKey}>${getSpace(20-(leadSTR[maxKey].lastName.length)+1)}=>   ${leadSTR[maxKey].pts}pts    |      ${leadSTR[maxKey].goalScored}/${leadSTR[maxKey].goalConceded}      |            ${leadSTR[maxKey].goalScored-leadSTR[maxKey].goalConceded}            |        ${leadSTR[maxKey].nbMatch} matchs        ${leadSTR[maxKey].lastPosIcon}`)
 
       leadSTR[maxKey].lastPos = i+1
     }
@@ -601,7 +601,7 @@ function getStringMsgGX(){
       else if(leadGX[maxKey].lastPos < i+1) leadGX[maxKey].lastPosIcon = " |     :arrow_double_down:"
       else if(leadGX[maxKey].lastPos == i+1) leadGX[maxKey].lastPosIcon = " |     :pause_button:"
 
-      GX += (`\n${i+1} - <@${maxKey}>${getSpace(31-(leadGX[maxKey].lastName.length)+1)}=>   ${leadGX[maxKey].pts}pts    |      ${leadGX[maxKey].goalScored}/${leadGX[maxKey].goalConceded}      |            ${leadGX[maxKey].goalScored-leadGX[maxKey].goalConceded}            |        ${leadGX[maxKey].nbMatch} matchs        ${leadGX[maxKey].lastPosIcon}`)
+      GX += (`\n${i+1} - <@${maxKey}>${getSpace(20-(leadGX[maxKey].lastName.length)+1)}=>   ${leadGX[maxKey].pts}pts    |      ${leadGX[maxKey].goalScored}/${leadGX[maxKey].goalConceded}      |            ${leadGX[maxKey].goalScored-leadGX[maxKey].goalConceded}            |        ${leadGX[maxKey].nbMatch} matchs        ${leadGX[maxKey].lastPosIcon}`)
 
       leadGX[maxKey].lastPos = i+1
     }
@@ -649,7 +649,9 @@ function getCurrentDate(){
 }
 
 function getName(id){
-  return bot.guilds.cache.get(config.serv).members.cache.get(id).nickname
+  var temp = bot.guilds.cache.get(config.serv).members.cache.get(id).nickname
+  if(temp == null) temp = "null"
+  return temp
 }
 
 function getSpace(nb){
