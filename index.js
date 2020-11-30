@@ -437,7 +437,7 @@ function getStringMsgSD(){
   var maxKey
   var maxKeys = []
 
-  SD += "\nX.                         NOM                         |    PTS    |    BUTS    |    DIFF  BUTS    |    NB MATCHS    |     :repeat:"
+  SD += "\nX.                 NOM                 |    PTS    |    BUTS    |    DIFF  BUTS    |    NB MATCHS    |     :repeat:"
 
   for(var x in leadSD){
     for(var item in leadSD){
@@ -461,7 +461,7 @@ function getStringMsgSD(){
       else if(leadSD[maxKey].lastPos < i+1) leadSD[maxKey].lastPosIcon = " |     :arrow_double_down:"
       else if(leadSD[maxKey].lastPos == i+1) leadSD[maxKey].lastPosIcon = " |     :pause_button:"
 
-      SD += (`\n${i+1} - <@${maxKey}>${getSpace(20-(leadSD[maxKey].lastName.length)+1)}=>   ${leadSD[maxKey].pts}pts    |      ${leadSD[maxKey].goalScored}/${leadSD[maxKey].goalConceded}      |            ${leadSD[maxKey].goalScored-leadSD[maxKey].goalConceded}            |        ${leadSD[maxKey].nbMatch} matchs        ${leadSD[maxKey].lastPosIcon}`)
+      SD += (`\n${i+1} - <@${maxKey}>${getSpace(20-(leadSD[maxKey].lastName.length)+1)}=>   ${leadSD[maxKey].pts}pts    |      ${leadSD[maxKey].goalScored}/${leadSD[maxKey].goalConceded}      |        ${leadSD[maxKey].goalScored-leadSD[maxKey].goalConceded}        |        ${leadSD[maxKey].nbMatch} matchs        ${leadSD[maxKey].lastPosIcon}`)
       leadSD[maxKey].lastPos = i+1
     }
   }
@@ -472,7 +472,7 @@ function getStringMsgSD(){
 function getStringMsgCS(){
   var CS = "------------------------------------------------\nLeaderboard Chrono Stones :\n"
   var i = -1
-
+  var temp = ""
   var max = {
     pts: 0,
     goalScored: 0,
@@ -483,7 +483,7 @@ function getStringMsgCS(){
   var maxKey
   var maxKeys = []
 
-  CS += "\nX.                         NOM                         |    PTS    |    BUTS    |    DIFF  BUTS    |    NB MATCHS    |     :repeat:"
+  CS += "\nX.                 NOM                 |    PTS    |    BUTS    |    DIFF  BUTS    |    NB MATCHS    |     :repeat:"
 
   for(var x in leadCS){
     for(var item in leadCS){
@@ -502,12 +502,13 @@ function getStringMsgCS(){
 
     if(maxKey != undefined){
       i += 1
-      if(leadCS[maxKey].lastPos == 1000) leadCS[maxKey].lastPosIcon = " |     :new:"
-      else if(leadCS[maxKey].lastPos > i+1) leadCS[maxKey].lastPosIcon = " |     :arrow_double_up:"
-      else if(leadCS[maxKey].lastPos < i+1) leadCS[maxKey].lastPosIcon = " |     :arrow_double_down:"
-      else if(leadCS[maxKey].lastPos == i+1) leadCS[maxKey].lastPosIcon = " |     :pause_button:"
+      if(leadCS[maxKey].lastPos == 1000) leadCS[maxKey].lastPosIcon = " |    :new:"
+      else if(leadCS[maxKey].lastPos > i+1) leadCS[maxKey].lastPosIcon = " |    :arrow_double_up:"
+      else if(leadCS[maxKey].lastPos < i+1) leadCS[maxKey].lastPosIcon = " |    :arrow_double_down:"
+      else if(leadCS[maxKey].lastPos == i+1) leadCS[maxKey].lastPosIcon = " |    :pause_button:"
 
-      CS += (`\n${i+1} - <@${maxKey}>${getSpace(20-(leadCS[maxKey].lastName.length)+1)}=>   ${leadCS[maxKey].pts}pts    |      ${leadCS[maxKey].goalScored}/${leadCS[maxKey].goalConceded}      |            ${leadCS[maxKey].goalScored-leadCS[maxKey].goalConceded}            |        ${leadCS[maxKey].nbMatch} matchs        ${leadCS[maxKey].lastPosIcon}`)
+      temp = (`\n${i+1} - <@${maxKey}>${getSpace(15-(leadCS[maxKey].lastName.length)+1)}=>   ${leadCS[maxKey].pts}pts    |   ${leadCS[maxKey].goalScored}/${leadCS[maxKey].goalConceded}   |     ${leadCS[maxKey].goalScored-leadCS[maxKey].goalConceded}     |     ${leadCS[maxKey].nbMatch} matchs    ${leadCS[maxKey].lastPosIcon}`)
+      if((temp.length + CS.length)< 2000) CS += temp
 
       leadCS[maxKey].lastPos = i+1
     }
@@ -530,7 +531,7 @@ function getStringMsgSTR(){
   var maxKey
   var maxKeys = []
 
-  STR += "\nX.                         NOM                         |    PTS    |    BUTS    |    DIFF  BUTS    |    NB MATCHS    |     :repeat:"
+  STR += "\nX.                 NOM                 |    PTS    |    BUTS    |    DIFF  BUTS    |    NB MATCHS    |     :repeat:"
 
   for(var x in leadSTR){
     for(var item in leadSTR){
@@ -554,7 +555,7 @@ function getStringMsgSTR(){
       else if(leadSTR[maxKey].lastPos < i+1) leadSTR[maxKey].lastPosIcon = " |     :arrow_double_down:"
       else if(leadSTR[maxKey].lastPos == i+1) leadSTR[maxKey].lastPosIcon = " |     :pause_button:"
 
-      STR += (`\n${i+1} - <@${maxKey}>${getSpace(20-(leadSTR[maxKey].lastName.length)+1)}=>   ${leadSTR[maxKey].pts}pts    |      ${leadSTR[maxKey].goalScored}/${leadSTR[maxKey].goalConceded}      |            ${leadSTR[maxKey].goalScored-leadSTR[maxKey].goalConceded}            |        ${leadSTR[maxKey].nbMatch} matchs        ${leadSTR[maxKey].lastPosIcon}`)
+      STR += (`\n${i+1} - <@${maxKey}>${getSpace(20-(leadSTR[maxKey].lastName.length)+1)}=>   ${leadSTR[maxKey].pts}pts    |      ${leadSTR[maxKey].goalScored}/${leadSTR[maxKey].goalConceded}      |        ${leadSTR[maxKey].goalScored-leadSTR[maxKey].goalConceded}        |        ${leadSTR[maxKey].nbMatch} matchs        ${leadSTR[maxKey].lastPosIcon}`)
 
       leadSTR[maxKey].lastPos = i+1
     }
@@ -577,7 +578,7 @@ function getStringMsgGX(){
   var maxKey
   var maxKeys = []
 
-  GX += "\nX.                         NOM                         |    PTS    |    BUTS    |    DIFF  BUTS    |    NB MATCHS    |     :repeat:"
+  GX += "\nX.                 NOM                  |    PTS    |    BUTS    |    DIFF  BUTS    |    NB MATCHS    |     :repeat:"
 
   for(var x in leadGX){
     for(var item in leadGX){
@@ -601,7 +602,7 @@ function getStringMsgGX(){
       else if(leadGX[maxKey].lastPos < i+1) leadGX[maxKey].lastPosIcon = " |     :arrow_double_down:"
       else if(leadGX[maxKey].lastPos == i+1) leadGX[maxKey].lastPosIcon = " |     :pause_button:"
 
-      GX += (`\n${i+1} - <@${maxKey}>${getSpace(20-(leadGX[maxKey].lastName.length)+1)}=>   ${leadGX[maxKey].pts}pts    |      ${leadGX[maxKey].goalScored}/${leadGX[maxKey].goalConceded}      |            ${leadGX[maxKey].goalScored-leadGX[maxKey].goalConceded}            |        ${leadGX[maxKey].nbMatch} matchs        ${leadGX[maxKey].lastPosIcon}`)
+      GX += (`\n${i+1} - <@${maxKey}>${getSpace(20-(leadGX[maxKey].lastName.length)+1)}=>   ${leadGX[maxKey].pts}pts    |      ${leadGX[maxKey].goalScored}/${leadGX[maxKey].goalConceded}      |         ${leadGX[maxKey].goalScored-leadGX[maxKey].goalConceded}        |        ${leadGX[maxKey].nbMatch} matchs        ${leadGX[maxKey].lastPosIcon}`)
 
       leadGX[maxKey].lastPos = i+1
     }
