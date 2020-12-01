@@ -165,7 +165,7 @@ function embedRoles(channel){
   const match = new Discord.MessageEmbed()
     .setColor('#E1002C')
     .setDescription('__**Matchmaking Arena Setup**__\nReact with an emoji to get a role !')
-    .addField('Roles :',':8ball: -> Matchmaking GO\n:timer: -> Matchmaking CS\n:space_invader: -> Matchmaking Galaxy\n:soccer: -> Matchmaking Strikers 2013')
+    .addField('Roles :',':smiling_imp: -> Matchmaking GO\n:timer: -> Matchmaking CS\n:alien: -> Matchmaking Galaxy\n:soccer: -> Matchmaking Strikers 2013')
     .setFooter('PEGASUS INAZUMA', 'https://i.imgur.com/8aZqZ9D.jpg')
 
   //channel.send(language)
