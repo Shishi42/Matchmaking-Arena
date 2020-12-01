@@ -691,7 +691,7 @@ function afficherStatsSet(channel){
     fs.writeFileSync("./ID/GO", m.id)
   });
   channel.send(msg["CS"]).then(m => {
-    fs.writeFileSync("./ID/GO", m.id)
+    fs.writeFileSync("./ID/CS", m.id)
   });
   channel.send(msg["GX"]).then(m => {
     fs.writeFileSync("./ID/GX", m.id)
