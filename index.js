@@ -5,6 +5,8 @@ const config = require("./config.json")
 const fs = require("fs")
 const jsonfile = require ("jsonfile")
 
+var space = 20
+
 var leadGO = {}
 var leadCS = {}
 var leadGX = {}
@@ -137,20 +139,25 @@ bot.on("message", async message => {
     message.delete()
   }
 
+  if(content[0] === "$update"){
+    updateMsg()
+    message.delete()
+  }
+
   /*if(content[0] === "$display"){
     afficherStats(message.channel)
     message.delete()
   }*/
 
-  if(content[0] === "$roles"){
+  /*if(content[0] === "$roles"){
     embedRoles(message.channel)
     message.delete()
-  }
+  }*/
 
 })
 
-function embedRoles(channel){
-  /*const language = new Discord.MessageEmbed()
+/*function embedRoles(channel){
+  const language = new Discord.MessageEmbed()
     .setColor('#E1002C')
     .setDescription('__**Languages Setup**__\nReact with an emoji to get a role !')
     .addField('Roles :',':flag_fr: -> Français\n:globe_with_meridians: -> International')
@@ -160,7 +167,7 @@ function embedRoles(channel){
     .setColor('#E1002C')
     .setDescription('__**Notifications Setup**__\nReact with an emoji to get a role !')
     .addField('Roles :',':trophy: -> Tournois / Tournaments\n:bell: -> Réseaux Sociaux / Social Media')
-    .setFooter('PEGASUS INAZUMA', 'https://i.imgur.com/8aZqZ9D.jpg')*/
+    .setFooter('PEGASUS INAZUMA', 'https://i.imgur.com/8aZqZ9D.jpg')
 
   const match = new Discord.MessageEmbed()
     .setColor('#E1002C')
@@ -171,7 +178,7 @@ function embedRoles(channel){
   //channel.send(language)
   //channel.send(notif)
   channel.send(match)
-}
+}*/
 
 function addPlayer(jeu, id, points, goalScored, goalConceded, nbMatch){
   if(jeu === "GO"){
@@ -470,7 +477,7 @@ function getStringMsgGO(){
       else if(leadGO[maxKey].lastPos < i+1) leadGO[maxKey].lastPosIcon = " |    :arrow_double_down:"
       else if(leadGO[maxKey].lastPos == i+1) leadGO[maxKey].lastPosIcon = " |    :pause_button:"
 
-      temp = (`\n${i+1} - <@${maxKey}>${getSpace(15-(leadGO[maxKey].lastName.length)+1)}=>   ${leadGO[maxKey].pts}pts    |   ${leadGO[maxKey].goalScored}/${leadGO[maxKey].goalConceded}   |     ${leadGO[maxKey].goalScored-leadGO[maxKey].goalConceded}     |   ${leadGO[maxKey].nbMatch} matchs  ${leadGO[maxKey].lastPosIcon}`)
+      temp = (`\n${i+1} - <@${maxKey}>${getSpace(space-(leadGO[maxKey].lastName.length)+1)}=>   ${leadGO[maxKey].pts}pts    |   ${leadGO[maxKey].goalScored}/${leadGO[maxKey].goalConceded}   |     ${leadGO[maxKey].goalScored-leadGO[maxKey].goalConceded}     |   ${leadGO[maxKey].nbMatch} matchs  ${leadGO[maxKey].lastPosIcon}`)
       if((temp.length + GO.length)< 2000) GO += temp
 
       leadGO[maxKey].lastPos = i+1
@@ -518,7 +525,7 @@ function getStringMsgCS(){
       else if(leadCS[maxKey].lastPos < i+1) leadCS[maxKey].lastPosIcon = " |    :arrow_double_down:"
       else if(leadCS[maxKey].lastPos == i+1) leadCS[maxKey].lastPosIcon = " |    :pause_button:"
 
-      temp = (`\n${i+1} - <@${maxKey}>${getSpace(15-(leadCS[maxKey].lastName.length)+1)}=>   ${leadCS[maxKey].pts}pts    |   ${leadCS[maxKey].goalScored}/${leadCS[maxKey].goalConceded}   |     ${leadCS[maxKey].goalScored-leadCS[maxKey].goalConceded}     |   ${leadCS[maxKey].nbMatch} matchs  ${leadCS[maxKey].lastPosIcon}`)
+      temp = (`\n${i+1} - <@${maxKey}>${getSpace(space-(leadCS[maxKey].lastName.length)+1)}=>   ${leadCS[maxKey].pts}pts    |   ${leadCS[maxKey].goalScored}/${leadCS[maxKey].goalConceded}   |     ${leadCS[maxKey].goalScored-leadCS[maxKey].goalConceded}     |   ${leadCS[maxKey].nbMatch} matchs  ${leadCS[maxKey].lastPosIcon}`)
       if((temp.length + CS.length)< 2000) CS += temp
 
       leadCS[maxKey].lastPos = i+1
@@ -566,7 +573,7 @@ function getStringMsgGX(){
       else if(leadGX[maxKey].lastPos < i+1) leadGX[maxKey].lastPosIcon = " |    :arrow_double_down:"
       else if(leadGX[maxKey].lastPos == i+1) leadGX[maxKey].lastPosIcon = " |    :pause_button:"
 
-      temp = (`\n${i+1} - <@${maxKey}>${getSpace(15-(leadGX[maxKey].lastName.length)+1)}=>   ${leadGX[maxKey].pts}pts    |   ${leadGX[maxKey].goalScored}/${leadGX[maxKey].goalConceded}   |     ${leadGX[maxKey].goalScored-leadGX[maxKey].goalConceded}     |   ${leadGX[maxKey].nbMatch} matchs  ${leadGX[maxKey].lastPosIcon}`)
+      temp = (`\n${i+1} - <@${maxKey}>${getSpace(space-(leadGX[maxKey].lastName.length)+1)}=>   ${leadGX[maxKey].pts}pts    |   ${leadGX[maxKey].goalScored}/${leadGX[maxKey].goalConceded}   |     ${leadGX[maxKey].goalScored-leadGX[maxKey].goalConceded}     |   ${leadGX[maxKey].nbMatch} matchs  ${leadGX[maxKey].lastPosIcon}`)
       if((temp.length + GX.length)< 2000) v += temp
 
       leadGX[maxKey].lastPos = i+1
@@ -614,7 +621,7 @@ function getStringMsgSTR(){
       else if(leadSTR[maxKey].lastPos < i+1) leadSTR[maxKey].lastPosIcon = " |    :arrow_double_down:"
       else if(leadSTR[maxKey].lastPos == i+1) leadSTR[maxKey].lastPosIcon = " |    :pause_button:"
 
-      temp = (`\n${i+1} - <@${maxKey}>${getSpace(15-(leadSTR[maxKey].lastName.length)+1)}=>   ${leadSTR[maxKey].pts}pts    |   ${leadSTR[maxKey].goalScored}/${leadSTR[maxKey].goalConceded}   |     ${leadSTR[maxKey].goalScored-leadSTR[maxKey].goalConceded}     |   ${leadSTR[maxKey].nbMatch} matchs  ${leadSTR[maxKey].lastPosIcon}`)
+      temp = (`\n${i+1} - <@${maxKey}>${getSpace(space-(leadSTR[maxKey].lastName.length)+1)}=>   ${leadSTR[maxKey].pts}pts    |   ${leadSTR[maxKey].goalScored}/${leadSTR[maxKey].goalConceded}   |     ${leadSTR[maxKey].goalScored-leadSTR[maxKey].goalConceded}     |   ${leadSTR[maxKey].nbMatch} matchs  ${leadSTR[maxKey].lastPosIcon}`)
       if((temp.length + STR.length)< 2000) STR += temp
 
       leadSTR[maxKey].lastPos = i+1
