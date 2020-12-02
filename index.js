@@ -574,7 +574,7 @@ function getStringMsgGX(){
       else if(leadGX[maxKey].lastPos == i+1) leadGX[maxKey].lastPosIcon = " |    :pause_button:"
 
       temp = (`\n${i+1} - <@${maxKey}>${getSpace(space-(leadGX[maxKey].lastName.length)+1)}=>   ${leadGX[maxKey].pts}pts    |   ${leadGX[maxKey].goalScored}/${leadGX[maxKey].goalConceded}   |     ${leadGX[maxKey].goalScored-leadGX[maxKey].goalConceded}     |   ${leadGX[maxKey].nbMatch} matchs  ${leadGX[maxKey].lastPosIcon}`)
-      if((temp.length + GX.length)< 2000) v += temp
+      if((temp.length + GX.length)< 2000) GX += temp
 
       leadGX[maxKey].lastPos = i+1
     }
