@@ -4,9 +4,11 @@ config.json
 statSD.json
 statCS.json
 statGS.json
+statGO.jsob
 stats/backups
 SD
 CS
+GO
 STR
 GX
 TIME
@@ -15,4 +17,5 @@ SD.json
 CS.json
 STR.json
 GX.json
+GO.json	
 logs.txt
