@@ -1,2 +1,2 @@
-# Matchmaking-Arena
+# Matchmaking Arena
 Discord BOT for Pegasus Inazuma.
